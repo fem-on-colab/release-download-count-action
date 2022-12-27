@@ -10,6 +10,7 @@ import os
 import sys
 import types
 
+import _pytest.fixtures
 import pytest
 
 
@@ -28,7 +29,13 @@ def release_download_count(root_directory: str) -> types.ModuleType:
     return release_download_count
 
 
-def test_release_download_count(release_download_count: types.ModuleType) -> None:
+@pytest.fixture
+def token(request: _pytest.fixtures.SubRequest) -> str:
+    """Get token passed on the command line."""
+    return request.config.getoption("--token")  # type: ignore[no-any-return]
+
+
+def test_release_download_count(release_download_count: types.ModuleType, token: str) -> None:
     """
     Test the release_download_count function on the current repository.
 
@@ -36,9 +43,9 @@ def test_release_download_count(release_download_count: types.ModuleType) -> Non
     first and second "release_download_count" call.
     """
     dict_many_per_page = release_download_count.release_download_count(
-        "fem-on-colab/release-download-count-script", "", 10)
+        "fem-on-colab/release-download-count-script", token, 10)
     dict_one_per_page = release_download_count.release_download_count(
-        "fem-on-colab/release-download-count-script", "", 1)
+        "fem-on-colab/release-download-count-script", token, 1)
 
     assert dict_many_per_page == dict_one_per_page
     assert ("Initial commit", "test_file.txt") in dict_many_per_page
