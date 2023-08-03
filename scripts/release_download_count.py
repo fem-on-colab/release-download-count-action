@@ -21,7 +21,7 @@ def release_download_count(
         headers = None
     # Get all releases and corresponding download count
     page = 1
-    count = dict()
+    count: typing.Dict[typing.Tuple[str, str], int] = dict()
     while True:
         response = requests.get(
             f"https://api.github.com/repos/{repository_name}/releases?page={page}&per_page={per_page}",
@@ -32,8 +32,9 @@ def release_download_count(
                 release_name = release["name"]
                 for asset in release["assets"]:
                     asset_name = asset["name"]
-                    asset_download_count = asset["download_count"]
-                    assert (release_name, asset_name) not in count
+                    asset_download_count = int(asset["download_count"])
+                    if (release_name, asset_name) in count:
+                        assert count[(release_name, asset_name)] <= asset_download_count
                     count[(release_name, asset_name)] = asset_download_count
             page += 1
         else:
