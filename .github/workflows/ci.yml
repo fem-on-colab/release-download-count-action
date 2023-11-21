@@ -26,6 +26,11 @@ jobs:
       - name: Run tests
         run: |
           python3 -m pytest --token "${{ github.token }}" tests
+
+  warn:
+    runs-on: ubuntu-latest
+    if: github.repository == 'fem-on-colab/release-download-count-script' && github.ref == 'refs/heads/main' && github.event_name == 'schedule'
+    steps:
       - name: Warn if scheduled workflow is about to be disabled
         uses: fem-on-colab/warn-workflow-about-to-be-disabled-action@main
         with:
