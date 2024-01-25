@@ -6,14 +6,13 @@
 """Script to fetch the download count of each release in a GitHub repository."""
 
 import sys
-import typing
 
 import requests
 
 
 def release_download_count(
     repository_name: str, token: str, per_page: int
-) -> typing.Dict[typing.Tuple[str, str], int]:
+) -> dict[tuple[str, str], int]:
     """Fetch the download count of each release in a GitHub repository."""
     if token != "":
         headers = {"Authorization": f"token {token}"}
@@ -21,7 +20,7 @@ def release_download_count(
         headers = None
     # Get all releases and corresponding download count
     page = 1
-    count: typing.Dict[typing.Tuple[str, str], int] = dict()
+    count: dict[tuple[str, str], int] = dict()
     while True:
         response = requests.get(
             f"https://api.github.com/repos/{repository_name}/releases?page={page}&per_page={per_page}",
